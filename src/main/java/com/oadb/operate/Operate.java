@@ -101,4 +101,16 @@ public class Operate {
             AdbUtils.executeCmd(cmd);
         }
     }
+
+    public int installApp(String serialno, String apkUri, boolean isCover){
+        String cover = isCover ? "-r " : "";
+        File file = new File(apkUri);
+        if(file.exists()){
+            String cmd = "adb -s " + serialno + " install " + cover + apkUri;
+            String result = AdbUtils.executeCmd(cmd);
+            System.out.println(result);
+        }
+
+        return 0;
+    }
 }

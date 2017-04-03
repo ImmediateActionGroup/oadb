@@ -32,4 +32,12 @@ public class OperateTest {
         Operate operate = new Operate();
         operate.rebootDevice("4TTKDIAAH64T5T7L");
     }
+
+    @Test
+    public void install(){
+        Operate operate = new Operate();
+        operate.installApp("4TTKDIAAH64T5T7L",
+                "E:\\android_test\\app\\chaoshengbo.apk",
+                false);
+    }
 }
