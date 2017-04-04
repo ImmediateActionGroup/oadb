@@ -25,6 +25,7 @@ public class AdbUtils {
             StringBuffer sb = new StringBuffer();
             while ((line = inputStream.readLine()) != null){
                 sb.append(line + "\r\n");
+                System.out.println(line);
             }
             result = sb.toString();
             process.destroy();

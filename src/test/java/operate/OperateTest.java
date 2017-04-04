@@ -1,6 +1,7 @@
 package operate;
 
 import com.oadb.operate.Operate;
+import com.oadb.track.Track;
 import org.junit.Test;
 
 /**
@@ -58,5 +59,12 @@ public class OperateTest {
                 "1",
                 null,
                 "100");
+    }
+
+    @Test
+    public void trackCpu(){
+        Track track = new Track();
+        track.trackCpu("4TTKDIAAH64T5T7L",
+                "com.zhihu.android");
     }
 }

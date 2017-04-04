@@ -190,4 +190,13 @@ public class Operate {
         }
         return -1;
     }
+
+    public int runMonkey(String serialno, String packagename, Integer times){
+        return runMonkey(serialno, packagename, times,
+                "1", null, "200");
+    }
+
+    //截图
+
+
 }
