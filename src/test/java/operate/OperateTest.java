@@ -38,6 +38,25 @@ public class OperateTest {
         Operate operate = new Operate();
         operate.installApp("4TTKDIAAH64T5T7L",
                 "E:\\android_test\\app\\chaoshengbo.apk",
+                true);
+    }
+
+    @Test
+    public void uninstall(){
+        Operate operate = new Operate();
+        operate.uninstallApp("4TTKDIAAH64T5T7L",
+                "com.zuilot.chaoshengbo",
                 false);
+    }
+
+    @Test
+    public void runMonkey(){
+        Operate operate = new Operate();
+        operate.runMonkey("4TTKDIAAH64T5T7L",
+                "com.zuilot.chaoshengbo",
+                1000,
+                "1",
+                null,
+                "100");
     }
 }

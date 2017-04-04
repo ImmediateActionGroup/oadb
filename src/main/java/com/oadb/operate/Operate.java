@@ -1,6 +1,7 @@
 package com.oadb.operate;
 
 import com.oadb.util.AdbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,10 +13,14 @@ import java.util.List;
 public class Operate {
     private final String DEVICES = "adb devices";
 
+    //设备状态
+    private final String DEVICE_ONLINE = "device"; //正常在线
+    private final String DEVICE_OFFLINE = "offline"; // 出现异常或者其他
+    private final String DEVICE_UNKNOWN = "unknown"; // 不在线
 
-    private final String DEVICE_ONLINE = "device";
-    private final String DEVICE_OFFLINE = "offline";
-    private final String DEVICE_UNKNOWN = "unknown";
+    private final String MONKEY_LOG_DIR = "E:\\\\android_test\\\\monkey\\\\logs\\\\";
+    private final String MONKEY_LOG_DIR_2 = "/sdcard/monkey/logs/";
+
     public String operate(String cmd) {
         try {
             Process process = Runtime.getRuntime().exec(cmd);
@@ -102,15 +107,87 @@ public class Operate {
         }
     }
 
+    /**
+     * install app
+     * @param serialno 设备序列号
+     * @param apkUri apk路径
+     * @param isCover 是否覆盖安装
+     * @return 1 安装成功 | 0 apk路径错误 | -1 安装失败
+     */
     public int installApp(String serialno, String apkUri, boolean isCover){
         String cover = isCover ? "-r " : "";
         File file = new File(apkUri);
         if(file.exists()){
             String cmd = "adb -s " + serialno + " install " + cover + apkUri;
             String result = AdbUtils.executeCmd(cmd);
-            System.out.println(result);
+            if(result.trim().endsWith("Success")){
+                return 1;
+            }else{
+                return -1;
+            }
         }
-
         return 0;
+    }
+
+    /**
+     * uninstall app
+     *
+     * @param serialno 设备序列号
+     * @param packagename 包名
+     * @param isKeepCache 是否保留数据和缓存目录
+     * @return 1 success | -1 failure
+     */
+    public int uninstallApp(String serialno, String packagename, boolean isKeepCache){
+        String keep = isKeepCache ? "-k " : "";
+        String cmd = "adb -s " + serialno + " uninstall " + keep + packagename;
+        String result = AdbUtils.executeCmd(cmd);
+        if(result != null && result.trim().startsWith("Success")){
+            return 1;
+        }else{
+            return -1;
+        }
+    }
+
+    /**
+     * run monkey test
+     * @param serialno
+     * @param packagename
+     * @param times count
+     * @param v log level [null, 1, 2, 3]
+     * @param s seed [null | long ]
+     * @param throttle
+     * @return 1 success | -1 error
+     */
+    public int runMonkey(String serialno, String packagename, Integer times,
+                         String v, String s, String throttle){
+        String outFileName = packagename + "_monkey.log";
+        String vLevel = null;
+        if(v == null){
+            vLevel = "";
+        }else if("1".equals(v)){
+            vLevel = "-v ";
+        }else if("2".equals(v)){
+            vLevel = "-v -v ";
+        }else if("3".equals(v)){
+            vLevel = "-v -v -v ";
+        }
+        String seed = "";
+        if(s != null){
+            seed = "-s " + s + " ";
+        }
+        String th = "";
+        if(throttle != null){
+            th = "--throttle " + throttle + " ";
+        }
+        String out = ">" + MONKEY_LOG_DIR + outFileName;
+        String cmd = "adb -s " + serialno + " shell monkey -p "
+                + packagename + " " + th + seed + vLevel
+                + times.toString() + " ";
+        System.out.println(cmd);
+        String result = AdbUtils.executeCmd(cmd);
+        if(result != null && result.trim().endsWith("Monkey finished")){
+            return 1;
+        }
+        return -1;
     }
 }
