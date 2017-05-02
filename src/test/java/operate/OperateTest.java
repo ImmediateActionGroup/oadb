@@ -4,11 +4,13 @@ import com.oadb.operate.Operate;
 import com.oadb.track.Track;
 import org.junit.Test;
 
+import java.util.List;
+
 /**
  * Created by beishan on 2017/4/3.
  */
 public class OperateTest {
-
+    private Operate operate = new Operate();
     @Test
     public void test(){
         Operate operate = new Operate();
@@ -18,7 +20,15 @@ public class OperateTest {
     @Test
     public void getDevices(){
         Operate operate = new Operate();
-        operate.getDevices();
+        List<String > mobiles = operate.getDevices();
+        if(mobiles != null && mobiles.size() > 0){
+            System.out.println("当前在线" + mobiles.size() + "台");
+            for(String mobile : mobiles){
+                System.out.println(mobile);
+            }
+        }else {
+            System.out.println("当前没有在线设备");
+        }
 
     }
 
@@ -66,5 +76,12 @@ public class OperateTest {
         Track track = new Track();
         track.trackCpu("4TTKDIAAH64T5T7L",
                 "com.zhihu.android");
+    }
+
+    @Test
+    public void getDevicesMacTest(){
+        String serialno = "57d6baae";
+        operate.queryDevicesMacAdderss(serialno);
+        System.out.println("end");
     }
 }

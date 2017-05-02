@@ -10,6 +10,18 @@ import java.util.concurrent.FutureTask;
  */
 public class AdbUtils {
 
+    public static void killAdbServer(){
+        AdbUtils.executeCmd("adb kill-server");
+    }
+
+    public static void restartAdbServer(){
+        AdbUtils.executeCmd("adb start-server");
+    }
+    /**
+     * 执行adb 命令
+     * @param cmd
+     * @return
+     */
     public static String executeCmd(String cmd){
         //BufferedReader inputStream = null;
         //BufferedWriter outputStream = null;

@@ -11,7 +11,7 @@ import java.util.List;
  * Created by beishan on 2017/4/3.
  */
 public class Operate {
-    private final String DEVICES = "adb devices";
+    private final String CMD_DEVICES = "adb devices";
 
     //设备状态
     private final String DEVICE_ONLINE = "device"; //正常在线
@@ -54,18 +54,20 @@ public class Operate {
         return null;
     }
 
+    /**
+     * 查询在线设备
+     * @return 在线的设备 | null 表示没有设备
+     */
     public List<String> getDevices(){
-        String result = AdbUtils.executeCmd(DEVICES);
-        System.out.println(result);
+        String result = AdbUtils.executeCmd(CMD_DEVICES);
         List<String> devices = null;
         if(result != null){
             devices = new ArrayList<String>();
             String [] lines = result.split("\r\n");
             String device = null;
             for(String line : lines){
-                System.out.println(line);
                 if(line.endsWith("device")){
-                    device = line.substring(0, line.length() - 6);
+                    device = StringUtils.trim(line.substring(0, line.length() - 6));
                     devices.add(device);
                 }
             }
@@ -100,6 +102,10 @@ public class Operate {
         return -1;
     }
 
+    /**
+     * 重启设备
+     * @param serialno
+     */
     public void rebootDevice(String serialno){
         if(serialno != null){
             String cmd = "adb -s " + serialno + " reboot";
@@ -199,4 +205,32 @@ public class Operate {
     //截图
 
 
+    //获取机器mac地址
+
+    /**
+     * 获取设备的mac地址
+     *
+     * @param serialno
+     * @return 返回该设备的mac地址 | 空字符（当传入的serialno的设备不在线或者错误时）
+     */
+    public String queryDevicesMacAdderss(String serialno){
+        String cmd = "adb -s " + serialno + " shell cat /sys/class/net/wlan0/address";
+        String result = AdbUtils.executeCmd(cmd);
+        result = StringUtils.deleteWhitespace(result);
+        return result;
+    }
+
+    /**
+     * kill 某个进程
+     * @param serialno
+     * @param pid
+     * @return
+     */
+    public String killProcesses(String serialno, String pid){
+        String cmd = "adb -s " + serialno + " shell kill " + pid;
+        String result = AdbUtils.executeCmd(cmd);
+        System.out.println(result);
+        // TODO: 5/2/2017 这里还需要处理，暂时用不到这个函数，先不写 
+        return null;
+    }
 }
